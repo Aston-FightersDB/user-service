@@ -1,0 +1,20 @@
+
+spring:
+  application:
+    name: user-service
+  #  profiles:
+  #    active: local
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/fighters_user_service_db
+    username: postgres
+    password: postgres
+
+  liquibase:
+    change-log: db/changelog/liquibase-master.yml
+
+jwt:
+  key:
+    filename:
+      private: jwt/private_key
+      public: jwt/public_key
