@@ -12,13 +12,13 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - postgres-user-service:/var/lib/postgresql/data
+      - postgres-fighters-user-service:/var/lib/postgresql/data
     networks:
       - fighters-network
 
 volumes:
-  postgres-user-service:
-    name: postgres-user-service
+  postgres-fighters-user-service:
+    name: postgres-fighters-user-service
 
 networks:
   fighters-network:

@@ -1,5 +1,10 @@
 package ru.aston.userservice.service.impl;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,7 +17,8 @@ import ru.aston.userservice.entity.Role;
 import ru.aston.userservice.entity.User;
 import ru.aston.userservice.exception.AppException;
 import ru.aston.userservice.exception.EnumException;
-import ru.aston.userservice.mapper.UserMapper;
+import ru.aston.userservice.mapper.AuthMapper;
+import ru.aston.userservice.repository.RoleRepository;
 import ru.aston.userservice.repository.UserRepository;
 import ru.aston.userservice.service.AuthService;
 
@@ -24,9 +30,11 @@ public class AuthServiceImpl implements AuthService {
 
   private final PasswordEncoder passwordEncoder;
 
-  private final UserMapper userMapper;
+  private final AuthMapper authMapper;
 
   private final JwtTokenService jwtTokenService;
+
+  private final RoleRepository roleRepository;
 
   @Override
   public ServiceAuthResponse authorizeUser(
@@ -55,13 +63,14 @@ public class AuthServiceImpl implements AuthService {
       throw new AppException(EnumException.BAD_REQUEST,
           "User with this data is already registered");
     }
-    User user = userMapper.map(registrationRequestDto);
+    User user = authMapper.map(registrationRequestDto);
     user.setPassword(passwordEncoder.encode(registrationRequestDto.password()));
-
-    user.setRole(Role.builder().name("ROLE_USER").build());
+    Role userRole = roleRepository.findByName("USER")
+        .orElseThrow(() -> new RuntimeException("Role not found"));
+    user.setRoles(Set.of(userRole));
 
     userRepository.save(user);
 
-    return userMapper.map(user);
+    return authMapper.map(user);
   }
 }

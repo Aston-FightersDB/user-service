@@ -6,7 +6,7 @@ spring:
   #    active: local
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5433/fighters_user_service_db
+    url: jdbc:postgresql://localhost:5433/user_service_db
     username: postgres
     password: postgres
 

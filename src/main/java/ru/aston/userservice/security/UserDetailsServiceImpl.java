@@ -1,5 +1,6 @@
 package ru.aston.userservice.security;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,5 +28,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     return new UserDetailsImpl(user);
   }
-
 }

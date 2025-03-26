@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
-      author: shoich
+      id: create_roles_table
+      author: shoichi
       changes:
         - createTable:
             tableName: roles
@@ -12,18 +12,39 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     nullable: false
+                    unique: true
               - column:
-                  name: role_name
+                  name: name
                   type: VARCHAR(50)
                   constraints:
                     nullable: false
-              - column:
-                  name: description
-                  type: VARCHAR(255)
+                    unique: true
 
   - changeSet:
-      id: 2
-      author: shoich
+      id: populate_default_roles
+      author: shoichi
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_id
+                  value: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+              - column:
+                  name: name
+                  value: "USER"
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_id
+                  value: "b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12"
+              - column:
+                  name: name
+                  value: "ADMIN"
+  - changeSet:
+      id: create_users_table
+      author: shoichi
       changes:
         - createTable:
             tableName: users
@@ -49,15 +70,38 @@ databaseChangeLog:
                   name: profile_reg_date
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
-              - column:
-                  name: role_id
-                  type: UUID
-                  constraints:
-                    nullable: false
-                    foreignKeyName: fk_user_role
-                    references: roles(role_id)
 
         - addUniqueConstraint:
             tableName: users
             columnNames: username
             constraintName: uk_users_username
+
+  - changeSet:
+      id: create-user-roles-table
+      author: shoichi
+      changes:
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: uuid
+              - column:
+                  name: role_id
+                  type: uuid
+        - addPrimaryKey:
+            tableName: user_roles
+            columnNames: user_id, role_id
+            constraintName: pk_user_roles
+        - addForeignKeyConstraint:
+            baseTableName: user_roles
+            baseColumnNames: user_id
+            constraintName: fk_user_roles_user
+            referencedTableName: users
+            referencedColumnNames: user_id
+        - addForeignKeyConstraint:
+            baseTableName: user_roles
+            baseColumnNames: role_id
+            constraintName: fk_user_roles_role
+            referencedTableName: roles
+            referencedColumnNames: role_id

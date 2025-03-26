@@ -1,6 +1,8 @@
 package ru.aston.userservice.service;
 
 
+import io.jsonwebtoken.Claims;
+import java.util.Optional;
 import ru.aston.userservice.dtos.request.AuthorizationRequestDto;
 import ru.aston.userservice.dtos.request.RegistrationRequestDto;
 import ru.aston.userservice.dtos.response.RegistrationResponseDto;
@@ -11,5 +13,4 @@ public interface AuthService {
   ServiceAuthResponse authorizeUser(AuthorizationRequestDto authorizationRequestDto);
 
   RegistrationResponseDto registerNewUser(RegistrationRequestDto registrationRequestDto);
-
 }

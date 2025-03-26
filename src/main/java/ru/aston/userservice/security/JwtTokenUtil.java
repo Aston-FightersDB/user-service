@@ -16,6 +16,10 @@ public class JwtTokenUtil {
     return UUID.fromString(userIdStr);
   }
 
+  public String getLogin(String token) {
+    return (String) getPayloadWithoutSignature(token).get("login");
+  }
+
   public List<String> getAuthorities(String token) {
     Claims payload = getPayloadWithoutSignature(token);
     return (List<String>) payload.get("authorities", Collection.class);

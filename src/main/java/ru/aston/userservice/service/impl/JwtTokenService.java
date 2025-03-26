@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import ru.aston.userservice.entity.Role;
 import ru.aston.userservice.entity.User;
 import ru.aston.userservice.exception.AppException;
 import ru.aston.userservice.exception.EnumException;
@@ -43,8 +44,10 @@ public class JwtTokenService {
   public String generateAuthToken(User user) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("login", user.getUsername());
-    claims.put("authorities", user.getRole());
-    return createToken(claims, user);
+    claims.put("authorities", user.getRoles().stream()
+        .map(Role::getName)
+        .toList());
+      return createToken(claims, user);
   }
 
   public UUID getUserId(String token) {
