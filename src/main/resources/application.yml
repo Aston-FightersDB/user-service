@@ -1,3 +1,5 @@
+server:
+  port: 8081
 
 spring:
   application:
@@ -12,6 +14,27 @@ spring:
 
   liquibase:
     change-log: db/changelog/liquibase-master.yml
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: "user-service-group"
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
+              value:
+                default:
+                  type: ru.aston.userservice.dtos.kafka.EventFinishedDto
+                listener:
+                  missing-topics-fatal: false
 
 jwt:
   key:

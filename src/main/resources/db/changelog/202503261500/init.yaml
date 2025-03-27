@@ -1,0 +1,131 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-roles-table
+      author: shoichi
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true  # Перенесено из отдельного changeset
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_id
+                  value: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11"
+              - column:
+                  name: name
+                  value: "USER"  # Добавлен префикс ROLE_ для Spring Security
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: role_id
+                  value: "b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a12"
+              - column:
+                  name: name
+                  value: "ADMIN"  # Добавлен префикс ROLE_
+
+  - changeSet:
+      id: 002-create-users-table
+      author: shoichi
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true  # Перенесено из отдельного changeset
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: profile_reg_date
+                  type: timestamp
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: is_active
+                  type: boolean
+                  defaultValue: true
+
+  - changeSet:
+      id: 003-create-user-roles-junction
+      author: shoichi
+      changes:
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_roles_user
+                    references: users(user_id)
+              - column:
+                  name: role_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_roles_role
+                    references: roles(role_id)
+        - addPrimaryKey:
+            tableName: user_roles
+            columnNames: user_id, role_id
+            constraintName: pk_user_roles
+
+  - changeSet:
+      id: 1743077886300-1
+      author: shoichi
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_bets
+                  name: bet_id
+                  type: UUID
+              - column:
+                  name: event_id
+                  type: UUID
+              - column:
+                  name: fighter_id
+                  type: UUID
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_bet_user
+                    references: users(user_id)
+              - column:
+                  constraints:
+                    nullable: true
+                  name: success
+                  type: BOOLEAN
+            tableName: bets

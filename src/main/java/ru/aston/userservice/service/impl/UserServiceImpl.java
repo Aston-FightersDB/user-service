@@ -3,7 +3,9 @@ package ru.aston.userservice.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.aston.userservice.dtos.request.UpdateRequestDto;
 import ru.aston.userservice.dtos.response.UserResponseDto;
 import ru.aston.userservice.entity.User;
 import ru.aston.userservice.exception.AppException;
@@ -20,6 +22,8 @@ public class UserServiceImpl implements UserService {
 
   private final UserMapper userMapper;
 
+  private final PasswordEncoder passwordEncoder;
+
   @Override
   public List<UserResponseDto> getAllUsers() {
     List<User> users = userRepository.findAll();
@@ -27,5 +31,13 @@ public class UserServiceImpl implements UserService {
       throw new AppException(EnumException.NOT_FOUND, "No users found");
     }
     return users.stream().map(userMapper::map).collect(Collectors.toList());
+  }
+
+  @Override
+  public UserResponseDto updateUser(UpdateRequestDto updateRequestDto) {
+    User user = userMapper.map(updateRequestDto);
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    user = userRepository.save(user);
+    return userMapper.map(user);
   }
 }
